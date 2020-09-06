@@ -1,5 +1,7 @@
 package com.poc.anuj.kafka.producer.transactions;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +21,15 @@ public class TransactionsDataLoader {
 	@Qualifier("transactionProducerService")
 	private ProducerService<String, String> service;
 
-	public void produceData(){
+	private String topicName = "";
 
-		System.out.println("----------------" + kafkaProducerConfig.getTransactionsTopicName());
-		final String value = "anuj-mehra";
-		this.writeToKafka(value);
+	@PostConstruct
+	public void setup(){
+		topicName = kafkaProducerConfig.getTransactionsTopicName();
 	}
 
-	public void writeToKafka(String value){
-		final String topicName = kafkaProducerConfig.getTransactionsTopicName();
+
+	public void writeToKafka_FireAndForget(final String value){	
 
 		final Producer<String,String> producer = service.getKafkaProducer();
 
@@ -38,6 +40,21 @@ public class TransactionsDataLoader {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		System.out.println("---------value pushed to Kafka topic ------");
+	}
+
+	public void writeToKafka_SynchronousCall(final String value){	
+
+		final Producer<String,String> producer = service.getKafkaProducer();
+
+		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, value);
+
+		try{
+			producer.send(record).get();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("---------Async | value pushed to Kafka topic ------");
 	}
 
 }
