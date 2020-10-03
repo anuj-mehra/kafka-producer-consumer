@@ -29,32 +29,64 @@ public class TransactionsDataLoader {
 	}
 
 
-	public void writeToKafka_FireAndForget(final String value){	
+	public void writeToKafka_FireAndForget(final String key, final String value){	
 
 		final Producer<String,String> producer = service.getKafkaProducer();
 
-		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, value);
+		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, key , value);
 
 		try{
 			producer.send(record);	
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("---------value pushed to Kafka topic ------");
+		System.out.println("---------value pushed to Kafka topic | fire-and-forget ------");
 	}
 
-	public void writeToKafka_SynchronousCall(final String value){	
+	
+	public void writeToKafka_SynchronousCall(final String key, final String value){	
 
 		final Producer<String,String> producer = service.getKafkaProducer();
 
-		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, value);
+		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, key , value);
+
+		try{
+			// added a get here.
+			producer.send(record).get();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("---------value pushed to Kafka topic | Synchronous ------");
+	}
+	
+	
+	public void writeToKafka_AsynchronousCall(final String key, final String value){	
+
+		final Producer<String,String> producer = service.getKafkaProducer();
+
+		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, key , value);
 
 		try{
 			producer.send(record).get();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("---------Async | value pushed to Kafka topic ------");
+		System.out.println("---------value pushed to Kafka topic | Asynchronous ------");
+	}
+	
+	
+	public void writeToKafka_CustomPartitioner(final String key, final String value){	
+
+		final Producer<String,String> producer = service.getKafkaProducer();
+
+		final ProducerRecord<String,String> record = new ProducerRecord<>(topicName, key , value);
+
+		try{
+			producer.send(record).get();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("---------value pushed to Kafka topic | CustomPartitioner ------");
 	}
 
 }

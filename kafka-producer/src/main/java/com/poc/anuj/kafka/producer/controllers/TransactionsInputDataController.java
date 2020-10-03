@@ -26,20 +26,32 @@ public class TransactionsInputDataController {
 	private TransactionsDataLoader transactionsDataLoader;
 
 	// Create a new transactions in the Kafka topic.
-	@PostMapping(path="/fire-and-forget/")
+	@PostMapping(path="/fire-and-forget")
 	public ResponseEntity.BodyBuilder pushTransaction_FireAndForget(@RequestBody Transactions transactions){
 
-		transactionsDataLoader.writeToKafka_FireAndForget(transactions.toString());
+		transactionsDataLoader.writeToKafka_FireAndForget(transactions.getTranId().toString(), transactions.toString());
 		// this URI will be available in the Response header. 
 		// Successful status of POST is 201
 		return ResponseEntity.ok();
 
 	}
 
-	@PostMapping(path="/async-call/")
+	// Create a new transactions in the Kafka topic.
+	@PostMapping(path="/sync-call")
 	public ResponseEntity.BodyBuilder pushTransaction_SynchronousCall(@RequestBody Transactions transactions){
 
-		transactionsDataLoader.writeToKafka_SynchronousCall(transactions.toString());
+		transactionsDataLoader.writeToKafka_SynchronousCall(transactions.getTranId().toString(), transactions.toString());
+		// this URI will be available in the Response header. 
+		// Successful status of POST is 201
+		return ResponseEntity.ok();
+
+	}
+	
+	// Create a new transactions in the Kafka topic.
+	@PostMapping(path="/async-call")
+	public ResponseEntity.BodyBuilder pushTransaction_AsynchronousCall(@RequestBody Transactions transactions){
+
+		transactionsDataLoader.writeToKafka_AsynchronousCall(transactions.getTranId().toString(), transactions.toString());
 		// this URI will be available in the Response header. 
 		// Successful status of POST is 201
 		return ResponseEntity.ok();

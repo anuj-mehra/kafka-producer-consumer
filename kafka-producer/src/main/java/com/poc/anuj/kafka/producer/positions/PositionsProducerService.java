@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.poc.anuj.kafka.producer.config.KafkaProducerConfig;
 import com.poc.anuj.kafka.producer.service.ProducerService;
 
-//@Service("positionsProducerService")
+@Service("positionsProducerService")
 public class PositionsProducerService  implements ProducerService<String, String>{
 
 	@Autowired
